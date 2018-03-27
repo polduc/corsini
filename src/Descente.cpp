@@ -8,7 +8,6 @@ int Descente(const vector<vector<int>>& mat, int nbSommets, vector<int> part,
 	int compteur;
 	int haut = ceil((double) nbSommets / k);
 	int bas = nbSommets / k;
-	bool condition;
 	int fopt = Foptim(mat, part);
 	int foptim;
 	vector<vector<int>> voisinage((k - 1) * nbSommets, vector<int>(nbSommets));
@@ -27,17 +26,9 @@ int Descente(const vector<vector<int>>& mat, int nbSommets, vector<int> part,
 			place += (k - 1);
 		}
 		for (int i = 0; i < (k - 1) * nbSommets; i++) {
-			condition = true;
-			for (int j = 0; j < nbSommets; j++) {
-				if (bas > voisinage[i][j] || voisinage[i][j] > haut) {
-					condition = false;
-					break;
-				}
-			}
-			//AfficheVector(voisinage[i]);
-			//cout << endl;
-
-			if (condition) {
+			Affiche(voisinage[i]);
+			cout << endl;
+			if (Realisable(voisinage[i], k, bas, haut)) {
 				foptim = Foptim(mat, voisinage[i]);
 				if (foptim < fopt) {
 					Best++;
@@ -48,7 +39,8 @@ int Descente(const vector<vector<int>>& mat, int nbSommets, vector<int> part,
 			}
 		}
 	}
-	AfficheVector(part);
+	cout << endl;
+	Affiche(part);
 	cout << endl;
 	return fopt;
 }
@@ -57,54 +49,57 @@ void Gradient(const vector<vector<int>>& mat, int nbSommets, int k) {
 	int fn = 10 * nbSommets;
 	int haut = ceil((double) nbSommets / k);
 	int bas = nbSommets / k;
-	int sum;
 	int randNum;
-	int j;
-	int temp;
+	int temp_s;
+	int temp_k;
 	int haut_temp;
 	int bas_temp;
+	srand (time(NULL));
 	vector<int> config(k);
 	vector<int> partition(nbSommets);
-	set<int> place;
+	set<int> place_part;
+	set<int> place_config;
+	set<int>::iterator it;
 	for (int n = 0; n < fn; n++) {
-		sum = nbSommets;
-		j = 0;
-		for(int o =0; o< nbSommets; o++){
-			place.insert(o);
+		for (int i = 0; i < nbSommets; i++) {
+			place_part.insert(i);
+		}
+		for (int i = 0; i < k; i++) {
+			place_config.insert(i);
 		}
 		haut_temp = haut;
 		bas_temp = bas;
-		for (int i = k; i > 0; i--) {
-			if(bas_temp != haut_temp)
-				randNum = rand() % (haut_temp - bas_temp + 1) + bas_temp;
-			else
-				randNum = bas_temp;
-			config[j] = randNum;
-			j++;
-			sum -= randNum;
-			cout<<"sum : "<<sum<<endl;
-			cout<<"k : "<<i<<endl;
-			haut_temp = ceil((double) sum / i);
-			bas_temp = sum / i;
-			cout<<"haut : "<<haut_temp<<"bas : "<<bas_temp<<endl;
+		temp_s = nbSommets;
+		temp_k = k;
+		config.assign(k, 0);
+		for (int i = k - 1; i > 0; i--) {
+			randNum = rand() % temp_k;
+			it = place_config.begin();
+			advance(it, randNum);
+			randNum = rand() % (haut_temp - bas_temp + 1) + bas_temp;
+			config[*it] = randNum;
+			place_config.erase(*it);
+			temp_k--;
+			temp_s -= randNum;
+			haut_temp = ceil((double) temp_s / i);
+			bas_temp = temp_s / i;
 		}
-		//config[j] = sum;
-
-		temp = k;
-/*
-		for(int l=0;l<k;l++){
-			for(int m=config[l];m>0;m--){
-				randNum = rand() %k;
-				//cout << randNum << endl;
-				partition[randNum]=l;
-				place.erase(randNum);
-				temp--;
+		it = place_config.begin();
+		config[*it] = temp_s;
+		temp_s = nbSommets;
+		for (int l = 0; l < k; l++) {
+			for (int m = config[l]; m > 0; m--) {
+				randNum = rand() % temp_s;
+				it = place_part.begin();
+				advance(it, randNum);
+				partition[*it] = l;
+				place_part.erase(*it);
+				temp_s--;
 			}
-
-		}*/
-		AfficheVector(config);
+		}
+		Affiche(config);
 		cout << endl;
-		AfficheVector(partition);
+		Affiche(partition);
 		cout << endl;
 	}
 }

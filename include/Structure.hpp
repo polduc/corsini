@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <iterator>
+#include <list>
 
 using namespace std;
 struct arc {
@@ -18,10 +20,13 @@ struct graphe {
 };
 
 vector<vector<int>> MatriceAdj(graphe g);
-void AfficheVector(vector<vector<int>> vec);
-void AfficheVector(vector<int> vec);
+void Affiche(vector<vector<int>> vec);
+void Affiche(vector<int> vec);
+void Affiche(list<int> vec);
 void Verif(vector<vector<int>> graphe, vector<int> degre, int dmin, int dmax);
 
 int Foptim(const vector<vector<int>>& mat, const vector<int>& partition);
+
+bool Realisable(const vector<int>& classe, int k, int bas, int haut);
 
 #endif /* INCLUDE_STRUCTURE_HPP_ */

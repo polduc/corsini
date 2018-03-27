@@ -5,6 +5,7 @@
 #include <string>
 #include <algorithm>
 #include <set>
+#include <time.h>
 
 int Descente(const vector<vector<int>>& mat, int nbSommets, vector<int> part,
 		int k);

@@ -24,7 +24,7 @@ vector<vector<int>> MatriceAdj(graphe g) {
 	return mat;
 }
 
-void AfficheVector(vector<vector<int>> vec) {
+void Affiche(vector<vector<int>> vec) {
 	for (size_t i = 0; i < vec.size(); i++) {
 		for (size_t j = 0; j < vec[0].size(); j++) {
 			cout << vec[i][j] << " ";
@@ -33,9 +33,16 @@ void AfficheVector(vector<vector<int>> vec) {
 	}
 }
 
-void AfficheVector(vector<int> vec) {
+void Affiche(vector<int> vec) {
 	for (size_t i = 0; i < vec.size(); i++) {
 		cout << vec[i] << " ";
+	}
+}
+
+void Affiche(list<int> vec) {
+	list<int>::iterator it;
+	for (it = vec.begin(); it != vec.end(); it++) {
+		cout << *it << " ";
 	}
 }
 
@@ -67,9 +74,9 @@ void Verif(vector<vector<int>> graphe, vector<int> degre, int dmin, int dmax) {
 		verif = false;
 	}
 	if (verif == false) {
-		cout << "Erreur de lecture des données !" << endl;
+		cout << "Erreur de lecture des donnees !" << endl;
 	} else {
-		cout << "Lecture des données réalisée avec succès." << endl;
+		cout << "Lecture des donnees realisee avec succes." << endl;
 	}
 }
 
@@ -85,4 +92,12 @@ int Foptim(const vector<vector<int>>& mat, const vector<int>& part) {
 	return somme;
 }
 
+bool Realisable(const vector<int>& classe, int k, int bas, int haut) {
+	for (int i = 0; i < k; i++) {
+		if (bas > classe[i] || classe[i] > haut) {
+			return false;
+		}
+	}
+	return true;
+}
 

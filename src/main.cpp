@@ -107,7 +107,7 @@ int main() {
 		G3[4 - 1][4 - 1] = 1;
 		G3[4 - 1][5 - 1] = 1;
 		G3[5 - 1][6 - 1] = 1;
-		AfficheVector(G3);
+		//AfficheVector(G3);
 
 		for (int i = 1; i <= 10; i++) {
 			if (2 * i <= 10) {
@@ -120,21 +120,20 @@ int main() {
 				G4[i - 1][5 * i - 1] = 1;
 			}
 		}
-		AfficheVector(G4);
-
+		//AfficheVector(G4);
+		Affiche(adj);
 		int somme;
 		vector<int> best_part;
-		somme = Fopt(adj, nbSommets, best_part, 3);
+		/*somme = Fopt(adj, nbSommets, best_part, 3);
 		cout << somme << endl;
 		cout << endl;
-		somme = Descente(G1, 4, best_part, 3);
-		//cout << somme << endl;
+		somme = Descente(adj, nbSommets, best_part, 3);
+		cout << somme << endl;*/
 
 		Gradient(G1, 4, 3);
 
 	} else {
 		cerr << "Impossible d'ouvrir le fichier !" << endl;
-		main();
 	}
 	return 0;
 }
