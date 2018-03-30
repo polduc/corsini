@@ -1,6 +1,7 @@
 #include "../include/Structure.hpp"
 #include "../include/Enumeration.hpp"
 #include "../include/Descente.hpp"
+#include "../include/Recuit.hpp"
 using namespace std;
 
 int main() {
@@ -123,14 +124,18 @@ int main() {
 		//AfficheVector(G4);
 		Affiche(adj);
 		int somme;
-		vector<int> best_part;
-		/*somme = Fopt(adj, nbSommets, best_part, 3);
-		cout << somme << endl;
+		vector<int> best_part(nbSommets, 0);
+		//somme = Fopt(adj, nbSommets, best_part, 3);
+		//cout << somme << endl;
+		/*
 		cout << endl;
 		somme = Descente(adj, nbSommets, best_part, 3);
 		cout << somme << endl;*/
 
-		Gradient(G1, 4, 3);
+		//Gradient(adj, nbSommets, 3);
+
+		somme = Recuit(adj, nbSommets, 3, best_part);
+		cout << somme << endl;
 
 	} else {
 		cerr << "Impossible d'ouvrir le fichier !" << endl;

@@ -9,6 +9,7 @@ int Descente(const vector<vector<int>>& mat, int nbSommets, vector<int> part,
 	int haut = ceil((double) nbSommets / k);
 	int bas = nbSommets / k;
 	int fopt = Foptim(mat, part);
+	vector<int> classe(k);
 	int foptim;
 	vector<vector<int>> voisinage((k - 1) * nbSommets, vector<int>(nbSommets));
 	while (fini == false) {
@@ -26,9 +27,12 @@ int Descente(const vector<vector<int>>& mat, int nbSommets, vector<int> part,
 			place += (k - 1);
 		}
 		for (int i = 0; i < (k - 1) * nbSommets; i++) {
-			Affiche(voisinage[i]);
-			cout << endl;
-			if (Realisable(voisinage[i], k, bas, haut)) {
+			classe.assign(k, 0);
+			for (int j = 0; j < nbSommets; j++) {
+				classe[voisinage[i][j]] += 1;
+			}
+
+			if (Realisable(classe, k, bas, haut)) {
 				foptim = Foptim(mat, voisinage[i]);
 				if (foptim < fopt) {
 					Best++;
@@ -39,22 +43,22 @@ int Descente(const vector<vector<int>>& mat, int nbSommets, vector<int> part,
 			}
 		}
 	}
-	cout << endl;
-	Affiche(part);
-	cout << endl;
 	return fopt;
 }
 
 void Gradient(const vector<vector<int>>& mat, int nbSommets, int k) {
 	int fn = 10 * nbSommets;
 	int haut = ceil((double) nbSommets / k);
-	int bas = nbSommets / k;
 	int randNum;
 	int temp_s;
 	int temp_k;
 	int haut_temp;
-	int bas_temp;
-	srand (time(NULL));
+	int tmp = 0;
+	int min = 1e9;
+	int max = 0;
+	double mean;
+	int sum = 0;
+	srand(time(NULL));
 	vector<int> config(k);
 	vector<int> partition(nbSommets);
 	set<int> place_part;
@@ -68,7 +72,6 @@ void Gradient(const vector<vector<int>>& mat, int nbSommets, int k) {
 			place_config.insert(i);
 		}
 		haut_temp = haut;
-		bas_temp = bas;
 		temp_s = nbSommets;
 		temp_k = k;
 		config.assign(k, 0);
@@ -76,13 +79,11 @@ void Gradient(const vector<vector<int>>& mat, int nbSommets, int k) {
 			randNum = rand() % temp_k;
 			it = place_config.begin();
 			advance(it, randNum);
-			randNum = rand() % (haut_temp - bas_temp + 1) + bas_temp;
-			config[*it] = randNum;
+			config[*it] = haut_temp;
 			place_config.erase(*it);
 			temp_k--;
-			temp_s -= randNum;
+			temp_s -= haut_temp;
 			haut_temp = ceil((double) temp_s / i);
-			bas_temp = temp_s / i;
 		}
 		it = place_config.begin();
 		config[*it] = temp_s;
@@ -101,6 +102,19 @@ void Gradient(const vector<vector<int>>& mat, int nbSommets, int k) {
 		cout << endl;
 		Affiche(partition);
 		cout << endl;
+		tmp = Descente(mat, nbSommets, partition, k);
+		Affiche(partition);
+		cout << endl;
+		cout << endl;
+		if (tmp > max)
+			max = tmp;
+		if (tmp < min)
+			min = tmp;
+		sum += tmp;
 	}
+	mean = (double) (sum / fn);
+	cout << "min : " << min << endl;
+	cout << "max : " << max << endl;
+	cout << "mean : " << mean << endl;
 }
 
