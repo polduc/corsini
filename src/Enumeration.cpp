@@ -34,8 +34,6 @@ int Fopt(const vector<vector<int>>& mat, int nbSommets, vector<int>& best_part,
 				}
 			}
 		}
-		Affiche(best_part);
-		cout << endl;
 		return fopt;
 	} else {
 		vector<int> classe(k, 0);
@@ -63,8 +61,6 @@ int Fopt(const vector<vector<int>>& mat, int nbSommets, vector<int>& best_part,
 				}
 			}
 		}
-		Affiche(best_part);
-		cout << endl;
 		return fopt;
 	}
 	return 0;

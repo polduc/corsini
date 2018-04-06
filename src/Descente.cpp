@@ -1,6 +1,6 @@
 #include "../include/Descente.hpp"
 
-int Descente(const vector<vector<int>>& mat, int nbSommets, vector<int> part,
+int Descente(const vector<vector<int>>& mat, int nbSommets, vector<int>& part,
 		int k) {
 	int Best = 0;
 	bool fini = false;
@@ -60,6 +60,7 @@ void Gradient(const vector<vector<int>>& mat, int nbSommets, int k) {
 	int sum = 0;
 	srand(time(NULL));
 	vector<int> config(k);
+	vector<int> best_part(nbSommets);
 	vector<int> partition(nbSommets);
 	set<int> place_part;
 	set<int> place_config;
@@ -98,20 +99,17 @@ void Gradient(const vector<vector<int>>& mat, int nbSommets, int k) {
 				temp_s--;
 			}
 		}
-		Affiche(config);
-		cout << endl;
-		Affiche(partition);
-		cout << endl;
 		tmp = Descente(mat, nbSommets, partition, k);
-		Affiche(partition);
-		cout << endl;
-		cout << endl;
+
 		if (tmp > max)
 			max = tmp;
-		if (tmp < min)
+		if (tmp < min){
 			min = tmp;
+			best_part = partition;
+		}
 		sum += tmp;
 	}
+	Affiche(best_part);
 	mean = (double) (sum / fn);
 	cout << "min : " << min << endl;
 	cout << "max : " << max << endl;

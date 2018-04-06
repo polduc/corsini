@@ -1,15 +1,26 @@
-#include "../include/Recuit.hpp"
+#include "../include/Tabou.hpp"
 
-vector<int> rand_voisinage(int nbSommets, vector<int>& part, int k) {
-	vector<vector<int>> voisinage;
+vector<int> voisinage_opt(const vector<vector<int>>& mat, int nbSommets,
+		list<vector<int>>& tabou, const vector<int>& part, int k) {
+	vector<int> best_part;
 	vector<int> temp(nbSommets), classe(k);
 	vector<vector<int>>::iterator it;
-	int randNum;
 	int haut = ceil((double) nbSommets / k);
 	int bas = nbSommets / k;
+	int foptim = 1e9;
+	int ftemp;
+	bool is_tabou;
+	int temp_i = -1;
+	int temp_j = -1;
 	for (int i = 0; i < nbSommets; i++) {
 		for (int j = 0; j < k; j++) {
-			if (part[i] != j) {
+			is_tabou = false;
+			for (auto l : tabou) {
+				if (l[0] == i && l[1] == j) {
+ 					is_tabou = true;
+				}
+			}
+			if (part[i] != j && is_tabou == false) {
 				temp = part;
 				temp[i] = j;
 				classe.assign(k, 0);
@@ -17,20 +28,25 @@ vector<int> rand_voisinage(int nbSommets, vector<int>& part, int k) {
 					classe[temp[j]] += 1;
 				}
 				if (Realisable(classe, k, bas, haut)) {
-					//Affiche(temp);
-					voisinage.push_back(temp);
+					ftemp = Foptim(mat, temp);
+					if (ftemp < foptim) {
+						best_part = temp;
+						temp_i = i;
+						temp_j = j;
+						foptim = ftemp;
+					}
 				}
 			}
+
 		}
 	}
+	tabou.pop_front(); //mise a jour tabou
+	tabou.push_back({temp_i, temp_j});
 
-	it = voisinage.begin();
-	randNum = rand() % voisinage.size();
-	advance(it, randNum);
-	return *it;
+	return best_part;
 }
 
-int Recuit(const vector<vector<int>>& mat, int nbSommets, int k,
+int Tabou(const vector<vector<int>>&mat, int nbSommets, int k,
 		vector<int>& best_part) {
 	/*choix sol initiale*/
 	int haut = ceil((double) nbSommets / k);
@@ -40,7 +56,8 @@ int Recuit(const vector<vector<int>>& mat, int nbSommets, int k,
 	int haut_temp;
 	srand(time(NULL));
 	vector<int> config_ini(k);
-	vector<int> partition(nbSommets);
+	vector<int> partition_X(nbSommets);
+	vector<int> partition_Y(nbSommets);
 	set<int> place_part;
 	set<int> place_config;
 	set<int>::iterator it;
@@ -72,48 +89,38 @@ int Recuit(const vector<vector<int>>& mat, int nbSommets, int k,
 			randNum = rand() % temp_s;
 			it = place_part.begin();
 			advance(it, randNum);
-			partition[*it] = l;
+			partition_X[*it] = l;
 			place_part.erase(*it);
 			temp_s--;
 		}
 	}
-	best_part = partition;
-	int fmin = Foptim(mat, partition);
-	double T = 1000;
-	int cond1 = 0, cond2 = 0;
-	int t = 0;
-	double p;
-	int delta;
-	int ftemp;
-	vector<int> voisinage(nbSommets);
-	voisinage = rand_voisinage(nbSommets, partition, k);
-	srand(time(NULL));
-	while (cond1<100) {
-		cond2 = 0;
-		while (cond2 < pow(nbSommets, 2)) {
-			voisinage = rand_voisinage(nbSommets, partition, k);
-			//Affiche(voisinage);
-			delta = Foptim(mat, voisinage) - Foptim(mat, partition);
-			if (delta < 0) {
-				partition = voisinage;
-				ftemp = Foptim(mat, voisinage);
-				if (ftemp < fmin) {
-					best_part = voisinage;
-					fmin = ftemp;
+	best_part = partition_X;
 
-				}
-			} else {
-				p = (rand() % 10000 / (double) 10000);
-				if (T > 1e-6 && p <= (double) exp(-delta / T)) {
-					partition = rand_voisinage(nbSommets, partition, k); //bug dans voisinage
-				}
-			}
-			t++;
-			cond2++;
-		}
-		T *= 0.87;
-		cond1++;
+	int fmin = Foptim(mat, partition_X);
+	int ftemp;
+	int IterMax = 500;
+	list<vector<int>> tabou;
+	vector<int> temp(2, -1);
+	int val;
+	if(nbSommets <= 5)
+		val = 3;
+	else
+		val = 7;
+	for (int t = 0; t < val; t++) {
+		tabou.push_back(temp);
 	}
+	int iter = 0;
+	while (iter < IterMax) {
+		iter++;
+		partition_Y = voisinage_opt(mat, nbSommets, tabou, partition_X, k);
+		ftemp = Foptim(mat, partition_Y);
+		if(ftemp < fmin){
+			best_part = partition_Y;
+			fmin = ftemp;
+		}
+		//tabou mis a jour dans voisinage_opt
+		partition_X = partition_Y;
+	}
+
 	return fmin;
 }
-

@@ -7,7 +7,7 @@
 #include <set>
 #include <time.h>
 
-int Descente(const vector<vector<int>>& mat, int nbSommets, vector<int> part,
+int Descente(const vector<vector<int>>& mat, int nbSommets, vector<int>& part,
 		int k);
 void Gradient(const vector<vector<int>>& mat, int nbSommets, int k);
 
