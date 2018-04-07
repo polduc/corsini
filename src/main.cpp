@@ -2,13 +2,18 @@
 #include "../include/Enumeration.hpp"
 #include "../include/Descente.hpp"
 #include "../include/Recuit.hpp"
+#include "../include/Tabou.hpp"
+
+#include <time.h>
+#include <stdio.h>
+
 using namespace std;
 
-int main() {
+int main(int argc, char *argv[]) {
 	string nom;
 	graphe G;
 	int nbSommets, nbAretes, dmin, dmax;
-
+	int k=atoi(argv[1]);
 	vector<vector<int>> adj;
 	vector<int> degre;
 
@@ -69,73 +74,49 @@ int main() {
 
 		adj = MatriceAdj(G);
 		Verif(adj, degre, dmin, dmax);
-		//AfficheVector(adj);
 		fichier.close();
 
-		vector<vector<int>> G1(4, vector<int>(4, 0));
-		vector<vector<int>> G2(3, vector<int>(3, 0));
+		//Affiche(adj);
 
-		G1[0][1] = 1;
-		G1[0][2] = 1;
-		G1[1][2] = 1;
-		G1[2][3] = 1;
-		G1[3][3] = 1;
-		//AfficheVector(G1);
-
-		G2[0][1] = 1;
-		G2[0][2] = 1;
-		G2[1][2] = 1;
-		//AfficheVector(G2);
-
-		/*
-		 vector<int> part(3);
-		 part[0] = 0;
-		 part[1] = 0;
-		 part[2] = 1;
-		 //AfficheVector(part);
-		 cout << endl;
-		 */
-
-		vector<vector<int>> G3(6, vector<int>(6, 0));
-		vector<vector<int>> G4(10, vector<int>(10, 0));
-
-		G3[1 - 1][2 - 1] = 1;
-		G3[1 - 1][3 - 1] = 1;
-		G3[1 - 1][5 - 1] = 1;
-		G3[1 - 1][6 - 1] = 1;
-		G3[2 - 1][3 - 1] = 1;
-		G3[3 - 1][4 - 1] = 1;
-		G3[4 - 1][4 - 1] = 1;
-		G3[4 - 1][5 - 1] = 1;
-		G3[5 - 1][6 - 1] = 1;
-		//AfficheVector(G3);
-
-		for (int i = 1; i <= 10; i++) {
-			if (2 * i <= 10) {
-				G4[i - 1][2 * i - 1] = 1;
-			}
-			if (3 * i <= 10) {
-				G4[i - 1][3 * i - 1] = 1;
-			}
-			if (5 * i <= 10) {
-				G4[i - 1][5 * i - 1] = 1;
-			}
-		}
-		//AfficheVector(G4);
-		Affiche(adj);
-		int somme;
+		int somme = 0;
 		vector<int> best_part(nbSommets, 0);
-		//somme = Fopt(adj, nbSommets, best_part, 3);
-		//cout << somme << endl;
-		/*
+
+		clock_t t;
+
+		t = clock();
+		somme = Fopt(adj, nbSommets, best_part, k);
+		cout << "Enumeration : " << endl;
+		Affiche(best_part);
+		cout << "Optimum : " << somme << endl;
+		t = clock() - t;
+		printf("time Enumeration : %f seconds", ((float)t)/CLOCKS_PER_SEC);
 		cout << endl;
-		somme = Descente(adj, nbSommets, best_part, 3);
-		cout << somme << endl;*/
 
-		//Gradient(adj, nbSommets, 3);
+		t = clock();
+		cout << "Descente Gradient : " << endl;
+		Gradient(adj, nbSommets, k);
+		t = clock() - t;
+		printf("time Descente Gradient : %f seconds",
+				((float)t)/CLOCKS_PER_SEC);
+		cout << endl;
 
-		somme = Recuit(adj, nbSommets, 3, best_part);
-		cout << somme << endl;
+		t = clock();
+		somme = Recuit(adj, nbSommets, k, best_part);
+		cout << "Recuit Simulé : " << endl;
+		Affiche(best_part);
+		cout << "Optimum : " << somme << endl;
+		t = clock() - t;
+		printf("time Recuit Simulé : %f seconds", ((float)t)/CLOCKS_PER_SEC);
+		cout << endl;
+
+		t = clock();
+		somme = Tabou(adj, nbSommets, k, best_part);
+		cout << "Tabou : " << endl;
+		Affiche(best_part);
+		cout << "Optimum : " << somme << endl;
+		t = clock() - t;
+		printf("time Tabou : %f seconds", ((float)t)/CLOCKS_PER_SEC);
+		cout << endl;
 
 	} else {
 		cerr << "Impossible d'ouvrir le fichier !" << endl;

@@ -37,6 +37,7 @@ void Affiche(vector<int> vec) {
 	for (size_t i = 0; i < vec.size(); i++) {
 		cout << vec[i] << " ";
 	}
+	cout << endl;
 }
 
 void Affiche(list<int> vec) {
@@ -44,6 +45,7 @@ void Affiche(list<int> vec) {
 	for (it = vec.begin(); it != vec.end(); it++) {
 		cout << *it << " ";
 	}
+	cout << endl;
 }
 
 void Verif(vector<vector<int>> graphe, vector<int> degre, int dmin, int dmax) {
@@ -93,6 +95,10 @@ int Foptim(const vector<vector<int>>& mat, const vector<int>& part) {
 }
 
 bool Realisable(const vector<int>& classe, int k, int bas, int haut) {
+	if(bas == haut){
+		bas--;
+		haut++;
+	}
 	for (int i = 0; i < k; i++) {
 		if (bas > classe[i] || classe[i] > haut) {
 			return false;
