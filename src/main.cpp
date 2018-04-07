@@ -84,6 +84,7 @@ int main(int argc, char *argv[]) {
 		clock_t t;
 
 		t = clock();
+
 		somme = Fopt(adj, nbSommets, best_part, k);
 		cout << "Enumeration : " << endl;
 		Affiche(best_part);
